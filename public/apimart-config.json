@@ -1,0 +1,57 @@
+{
+  "customProviders": [
+    {
+      "id": "apimart-gpt-image-2",
+      "name": "APIMart GPT-Image-2",
+      "template": "http-image",
+      "submit": {
+        "path": "images/generations",
+        "method": "POST",
+        "contentType": "json",
+        "body": {
+          "model": "$profile.model",
+          "prompt": "$prompt",
+          "n": "$params.n",
+          "size": "$params.size"
+        },
+        "taskIdPath": "data.0.task_id"
+      },
+      "editSubmit": {
+        "path": "images/generations",
+        "method": "POST",
+        "contentType": "json",
+        "body": {
+          "model": "$profile.model",
+          "prompt": "$prompt",
+          "n": "$params.n",
+          "size": "$params.size",
+          "image_urls": "$inputImages.dataUrls"
+        },
+        "taskIdPath": "data.0.task_id"
+      },
+      "poll": {
+        "path": "tasks/{task_id}",
+        "method": "GET",
+        "intervalSeconds": 3,
+        "statusPath": "data.status",
+        "successValues": ["completed", "succeeded", "success"],
+        "failureValues": ["failed", "error", "cancelled"],
+        "errorPath": "data.error.message",
+        "result": {
+          "imageUrlPaths": ["data.result.images.*.url.*"]
+        }
+      }
+    }
+  ],
+  "profiles": [
+    {
+      "id": "apimart-default",
+      "name": "APIMart 中转版",
+      "provider": "custom:apimart-gpt-image-2",
+      "baseUrl": "https://image-api-proxy.aaron-bjtu.workers.dev/v1",
+      "apiKey": "placeholder",
+      "model": "gpt-image-2",
+      "apiMode": "images"
+    }
+  ]
+}
