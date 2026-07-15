@@ -86,7 +86,7 @@ export default function App() {
         .then((importedSettings) => {
           if (!importedSettings) return
           const state = useStore.getState()
-          state.setSettings(mergeImportedSettings(state.settings, importedSettings))
+          state.setSettings(activateFirstImportedProfile(mergeImportedSettings(state.settings, importedSettings), importedSettings))
         })
         .catch((error) => {
           console.warn('Failed to import custom provider config URL:', error)
